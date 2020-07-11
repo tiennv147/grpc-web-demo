@@ -1,0 +1,14 @@
+# build binary
+FROM golang:1.14 as build-stage
+ADD baucua /go/src/gitlab.com/crypto-game-portal/playground/grpc-web-demo/baucua
+RUN cd /go/src/gitlab.com/crypto-game-portal/playground/grpc-web-demo/baucua \
+&& go mod vendor \
+&& CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-s -w" -o /baucua .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+COPY --from=build-stage /baucua /app/baucua
+
+EXPOSE 9090
+
+CMD ["./app/baucua"]

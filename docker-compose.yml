@@ -1,0 +1,35 @@
+version: '3.7'
+
+networks:
+  default:
+    name: grpc-web-demo
+
+services:
+  grpc-server:
+    build:
+      context: .
+      dockerfile: Dockerfile-grpc-baucua
+    restart: "no"
+    container_name: grpc-baucua
+    ports:
+      - 9090:9090
+    command: ./app/baucua
+  grpc-client:
+    build:
+      context: .
+      dockerfile: Dockerfile-grpc-client
+    restart: "no"
+    container_name: grpc-web-client
+    ports:
+      - 8081:8081
+    command: python3 -m http.server 8081
+  grpc-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile-grpc-proxy
+    restart: "no"
+    container_name: grpc-web-proxy
+    ports:
+      - 8080:8080
+      - 9901:9901
+    command: envoy -c /etc/envoy.yaml

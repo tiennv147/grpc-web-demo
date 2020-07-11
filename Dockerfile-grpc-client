@@ -1,0 +1,8 @@
+FROM python:3.8-alpine
+
+ADD ./dist/main.js /dist/main.js
+ADD index.html index.html
+
+EXPOSE 8081
+
+CMD ["python3", "-m", "http.server", "8081"]
